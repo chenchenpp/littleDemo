@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>绘制表格</title>
+	<style type="text/css">
+		#container{
+			position: absolute;
+			left: 50%;
+			top: 100px;
+			transform: translateX(-50%);
+		}
+	</style>
+</head>
+
+<body>
+<div id="container">
+    <canvas id="cavsElem">
+        你的浏览器不支持canvas，请升级浏览器
+    </canvas>
+</div>
+<script>
+    (function(){
+		
+        var originData = {
+			'80389':[{name:'万', num0:1, num1:13, num2:5, num3:15, num4:6, num5:4, num6:29, num7:8, num8:0, num9:18},
+					{name:'千', num0:0, num1:2, num2:6, num3:5, num4:16, num5:18, num6:22, num7:1, num8:3, num9:9},
+					 {name:'百', num0:3, num1:10, num2:29, num3:0, num4:9, num5:4, num6:18, num7:1, num8:2, num9:24},
+					 {name:'十', num0:4, num1:8, num2:10, num3:2, num4:11, num5:14, num6:20, num7:1, num8:0, num9:6},
+					 {name:'个', num0:1, num1:14, num2:30, num3:2, num4:79, num5:6, num6:18, num7:3, num8:9, num9:0}],
+			'69367':[ {name:'万', num0:2, num1:14, num2:6, num3:16, num4:7, num5:5, num6:0, num7:9, num8:1, num9:19},
+					 {name:'千', num0:1, num1:3, num2:7, num3:6, num4:17, num5:19, num6:23, num7:2, num8:4, num9:0},
+					 {name:'百', num0:4, num1:11, num2:30, num3:0, num4:10, num5:5, num6:19, num7:2, num8:3, num9:25},
+					 {name:'十', num0:5, num1:9, num2:11, num3:3, num4:12, num5:15, num6:0, num7:2, num8:1, num9:7},
+					 {name:'个', num0:2, num1:15, num2:31, num3:3, num4:80, num5:7, num6:19, num7:0, num8:10, num9:1}],
+			'35413':[ {name:'万', num0:3, num1:15, num2:7, num3:0, num4:8, num5:6, num6:1, num7:10, num8:2, num9:20},
+				 {name:'千', num0:2, num1:4, num2:8, num3:7, num4:18, num5:0, num6:24, num7:3, num8:5, num9:1},
+				 {name:'百', num0:5, num1:12, num2:31, num3:1, num4:0, num5:6, num6:20, num7:3, num8:4, num9:26},
+				 {name:'十', num0:2, num1:3, num2:1, num3:16, num4:13, num5:16, num6:1, num7:3, num8:2, num9:8},
+				 {name:'个', num0:3, num1:16, num2:31, num3:0, num4:81, num5:8, num6:20, num7:1, num8:11, num9:2}],
+			'47852':[ {name:'万', num0:4, num1:16, num2:8, num3:1, num4:0, num5:7, num6:2, num7:11, num8:3, num9:21},
+				 {name:'千', num0:3, num1:5, num2:9, num3:8, num4:19, num5:1, num6:25, num7:0, num8:6, num9:2},
+				 {name:'百', num0:6, num1:13, num2:32, num3:2, num4:1, num5:7, num6:21, num7:4, num8:0, num9:27},
+				 {name:'十', num0:7, num1:1, num2:13, num3:5, num4:14, num5:0, num6:2, num7:4, num8:3, num9:9},
+				 {name:'个', num0:1, num1:13, num2:5, num3:15, num4:6, num5:4, num6:29, num7:8, num8:0, num9:18}],
+		}
+		let originDataLength= Object.keys(originData).length
+		var tableHead={'万': "#006fff",'千':"#ff0000",'百':"#006fff",'十':"#ff0000", '个':"#006fff"}
+        var canvas=document.querySelector('#cavsElem');
+        var ctx=canvas.getContext('2d');
+		var uniNum=5;//单位数量
+		var rectH=20;//单元高度
+		var rectW=20;//单元宽度
+        canvas.width=rectW*10*uniNum;//宽度
+        canvas.height=(originDataLength+2)*rectH;//高度
+        canvas.style.border="1px solid #000";
+        ctx.scale(1,1)
+		
+        ctx.lineWidth = 1;//线的粗细
+        ctx.strokeStyle = "#000";
+        ctx.textAlign = "center";
+		
+		
+		// 序号颜色
+		ctx.fillStyle = "#000000";
+		ctx.fillText('序号', 10, 15);
+		// 表头
+		Object.keys(tableHead).forEach(function(data, index){
+			ctx.fillStyle = tableHead[data];//颜色
+			ctx.fillText(data, 100+200*index+20, 15);
+			ctx.moveTo(20+200*index, 0); //横线
+			ctx.lineTo(20+200*index,20);
+			let i=0
+			while(i<10){
+			  ctx.fillText(i, 30+i*20+index*200,35);
+			  i++
+			  ctx.moveTo(rectW*i+index*200,20); //竖线
+			  ctx.lineTo(rectW*i+index*200,canvas.height);
+			}
+		})
+		
+
+		// 行数据
+		Object.keys(originData).forEach(function(value, index){
+			ctx.fillStyle = "#000000";
+			ctx.fillText(index+1,10,rectH*index+55);  //序号
+			//originData[value]
+			for(var i= 0;i<originData[value].length;i++){//渲染数据
+				let numArr= Object.keys(originData[value][i]).map(function(item){
+					if(item!='name'){
+						return originData[value][i][item];
+					}
+				})
+				numArr.sort(function(a, b){
+					return b-a;
+				})
+				console.log(numArr)
+				let hangIndex=0
+				while(hangIndex<10){
+					// 填充背景颜色
+					ctx.fillStyle="#ff0000";
+					ctx.fillRect(20,40,20,20);//x y w h
+					if(originData[value][i]['num'+hangIndex]!=0){
+						ctx.fillStyle = "#000000";
+					} else {
+						// 等于零的情况下 
+						ctx.fillStyle = tableHead[originData[value][i].name];
+					}
+					ctx.fillText(originData[value][i]['num'+hangIndex],20*hangIndex+30+i*200,55+20*index);
+					hangIndex++;
+				}
+				
+			}
+		})
+		
+        for(var i= 0;i<originDataLength+2;i++){
+            ctx.moveTo(0,rectH*i);//横线
+            ctx.lineTo(canvas.width,rectH*i);
+            ctx.stroke();
+        }
+
+    }())
+</script>
+</body>
+</html>

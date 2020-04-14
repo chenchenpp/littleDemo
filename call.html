@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<button type="button" id="call">call</button>
+		<script type="text/javascript">
+			Function.prototype.myCall = function (context) {
+			  var context = context || window
+			  context.fn = this//核心代码 this指向调用者本身 即callfn
+			  var args = [...arguments].slice(1) //去掉第一个参数 即this
+			  var result = context.fn(...args)
+			  // 删除 fn
+			  delete context.fn
+			  return result
+			}
+			let callfn=function(a){
+				console.log(this, a)
+			}
+			let a={
+				name: 'chenpeng'
+			}
+			console.log(callfn.myCall(a,1,2,3))
+			Function.prototype.myCall=function(context){
+				let context=context||window;
+				context.fn=this;
+				let args=[...arguments].slice(1);
+				let result=context.fn(...args);
+				delete context.fn;
+				return result;
+			}
+		</script>
+	</body>
+</html>

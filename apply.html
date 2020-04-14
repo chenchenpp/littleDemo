@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<script type="text/javascript">
+			Function.prototype.myApply=function(context){
+				var context=context||window, result;
+				console.log(this)
+				context.fn=this;
+				if(arguments[1]){
+					result=context.fn(...arguments[1])
+				} else {
+					result=context.fn()
+				}
+				delete context.fn
+				return result
+			}
+			var clickApply=function(a,b){
+				console.log('我是apply', this, a, b)
+			}
+			let a={
+				name: '我是陈皮'
+			}
+			clickApply.myApply(a,['chen','peng'])
+			Function.prototype.myApply=function(context){
+				let context=context||window;
+				context.fn=this;
+				if(arguments[1]){
+					let result=context.fn(...arguments[1])
+				}else {
+					let result=context.fn()
+				}
+				delete context.fn
+				return result
+			}
+		</script>
+	</body>
+</html>

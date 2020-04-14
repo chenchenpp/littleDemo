@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<script type="text/javascript">
+			// 防抖的请求间隔是受用户自身操作影响
+			function debounch(fun, wait, imadiate){
+				let timer, context, args;
+				let later=()=>setTimeout(()=>{
+					timer=null;
+					if(!imadiate){ 
+						//处理不立即执行的情况
+						console.log(imadiate)
+						fun.apply(context, args);
+						context=args=null;
+					}
+				},wait)
+				return function(...rest){
+					console.log(rest)
+					if(timer){
+						clearTimeout(timer)
+						timer=later()
+					}else {
+						timer=later()
+						if(imadiate){
+							fun.apply(this,rest)
+						}else{
+							//在不立即执行情况下 将this环境和参数传递给later里
+							context=this;
+							args=rest;
+						}
+					}
+				}
+			}
+			let b=debounch(function(a){
+				console.log(1111111,a)
+			}, 500, true)
+			function debounch(fn, wait, immadiate){
+				let context, args, timer;
+				let later=()=>setTimeout(()=>{
+					timer=null;
+					if(!immadiate){
+						fn.apply(context, args);
+						context=args=null
+					}
+				},wait);
+				return function(...rest){
+					if(timer){
+						clearTimeout(timer);
+						timer=later();
+					}else{
+						timer=later();
+						if(immadiate){
+							fn.apply(this, rest)
+						}else{
+							context=this;
+							args=rest;
+						}
+					}
+				}
+			}
+		</script>
+	</body>
+</html>

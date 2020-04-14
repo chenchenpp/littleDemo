@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<script type="text/javascript">
+			function getDateTime(){
+				return new Date().getTime();
+			}
+			//leading trailing 两者不能共存，否则函数不能执行
+			function throttle(fn, wait, options={
+				leading: false,
+				trailing: true
+			}){
+				var args, context, result;
+				var timer=null;
+				var previous=0;
+				var later=function(){
+					previous=options.leading?getDateTime():0;
+					timer=null;
+					result=fn.apply(context, args);
+					if(!timer) args=context=null;
+				}
+				return function(){
+					var nowTime=getDateTime();
+					if(!previous&&!options.leading) previous=nowTime;
+					var remaning=wait*1000-(nowTime-previous);//
+					context=this;
+					args=[...arguments];
+					if(remaning<=0||remaning>wait){  //过了设定时间  正常操作
+						if(timer){
+							clearTimeout(timer);
+							timer=null
+						}
+						result=fn.apply(this, args);
+						if(!timer) context=args=null;
+					}else if(timer&&options.trailing){
+						timer=setTimeout(later, remaning)
+					}
+					return result;
+				}
+				
+			}
+		</script>
+	</body>
+</html>
